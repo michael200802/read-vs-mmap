@@ -79,16 +79,9 @@ int main()
 
 			printf("%zu.\n",i+1);
 
-			recv_bytes = recv(client_sockfd, &filesize, sizeof(filesize), 0);
-			if(recv_bytes == -1)
+			if(recvpack(client_sockfd, &filesize, sizeof(filesize), 0) == false)
 			{
 				perror("No se pudo obtener el size del archivo a recibir: recv fallo.");
-				fclose(stream);
-				break;
-			}
-			else if(recv_bytes != sizeof(filesize))
-			{
-				perror("No se pudo obtener el size del archivo a recibir: paquete incompleto.");
 				fclose(stream);
 				break;
 			}
@@ -98,16 +91,9 @@ int main()
 			{
 				packsize = MAX_PACKET_SIZE;
 			}
-			recv_bytes = recv(client_sockfd, buffer, packsize, 0);
-			if(recv_bytes == -1)
+			if(recvpack(client_sockfd, buffer, packsize, 0) == false)
 			{
 				perror("No se pudo recibir el primer paquete: recv fallo");
-				fclose(stream);
-				break;
-			}
-			else if(recv_bytes != packsize)
-			{
-				perror("No se pudo recibir el primer paquete: paquete incompleto.");
 				fclose(stream);
 				break;
 			}
@@ -118,15 +104,9 @@ int main()
 
 			while(filesize != 0)
 			{
-				recv_bytes = recv(client_sockfd, buffer, MAX_BUFFER_LEN, 0);
-				if(recv_bytes == -1)
+				if(recvpack(client_sockfd, buffer, MAX_BUFFER_LEN, 0) == false)
 				{
 					perror("No se pudo recibir un paquete: recv fallo");
-					break;
-				}
-				else if(recv_bytes != MAX_BUFFER_LEN)
-				{
-					perror("No se pudo recibir un paquete: paquete incompleto.");
 					break;
 				}
 				fwrite(buffer, sizeof(char), MAX_BUFFER_LEN, stream);

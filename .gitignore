@@ -1,0 +1,6 @@
+*.o
+client/*.txt
+server/*.txt
+server/server
+client/client
+client/fill
